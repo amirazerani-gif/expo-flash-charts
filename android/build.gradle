@@ -1,0 +1,26 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'com.amirgazerani.flashcharts'
+version = '0.1.0'
+
+android {
+  namespace "com.amirgazerani.flashcharts"
+  defaultConfig {
+    versionCode 1
+    versionName "0.1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+repositories {
+  maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+  implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+}

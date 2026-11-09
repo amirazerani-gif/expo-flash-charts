@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["ExpoFlashChartsModule"]
+  },
+  "android": {
+    "modules": ["com.amirgazerani.flashcharts.ExpoFlashChartsModule"]
+  }
+}
