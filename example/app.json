@@ -16,10 +16,16 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.salinagroup.tmpexample"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "expo": {
+      "experiments": {
+        "autolinkingModuleResolution": true
+      }
     }
   }
 }
