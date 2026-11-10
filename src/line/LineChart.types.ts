@@ -68,6 +68,10 @@ export type ValueSelectedEvent = {
 };
 
 export type LineChartProps = {
+  /**
+   * Chart data. When `streaming` is set, this only seeds the chart once on
+   * mount; use `ref.setData` to replace data afterwards.
+   */
   datasets: LineDataset[];
   xAxis?: XAxisConfig;
   yAxisLeft?: YAxisConfig;
@@ -81,12 +85,11 @@ export type LineChartProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+// LineChartRef: each method now returns a Promise
 export type LineChartRef = {
-  /** Add points to one dataset. Used for streaming. */
-  append(datasetIndex: number, points: LinePoint[]): void;
-  /** Replace all datasets. */
-  setData(datasets: LineDataset[]): void;
-  clear(): void;
-  moveToX(x: number): void;
-  setVisibleXRange(range: number): void;
+  append(datasetIndex: number, points: LinePoint[]): Promise<void>;
+  setData(datasets: LineDataset[]): Promise<void>;
+  clear(): Promise<void>;
+  moveToX(x: number): Promise<void>;
+  setVisibleXRange(range: number): Promise<void>;
 };

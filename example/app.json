@@ -1,31 +1,27 @@
 {
   "expo": {
-    "name": "tmp-example",
-    "slug": "tmp-example",
+    "name": "expo-flash-charts-example",
+    "slug": "expo-flash-charts-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "experiments": {
+      "autolinkingModuleResolution": true
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.amirgazerani.flashcharts.example"
     },
     "android": {
+      "package": "com.amirgazerani.flashcharts.example",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
-      "package": "com.salinagroup.tmpexample"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "expo": {
-      "experiments": {
-        "autolinkingModuleResolution": true
-      }
+      "predictiveBackGestureEnabled": false
     }
   }
 }

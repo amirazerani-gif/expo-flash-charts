@@ -1,32 +1,55 @@
-import { ExpoFlashChartsView } from 'expo-flash-charts';
-import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { LineChart } from 'expo-flash-charts';
+import { Text, View } from 'react-native';
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.container}>
-        <Text style={styles.header}>Module API Example</Text>
-        <Group name="Views">
-          <ExpoFlashChartsView onTap={() => console.log('Tapped!')} style={styles.view} />
-        </Group>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-function Group(props: { name: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.group}>
-      <Text style={styles.groupHeader}>{props.name}</Text>
-      {props.children}
+    <View style={{ flex: 1, paddingTop: 80, paddingHorizontal: 16, backgroundColor: '#fff' }}>
+      <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 12 }}>expo-flash-charts</Text>
+      <LineChart
+        style={{ height: 280 }}
+        datasets={[
+          {
+            label: 'Sales',
+            data: [
+              { x: 0, y: 3 },
+              { x: 1, y: 7 },
+              { x: 2, y: 5 },
+              { x: 3, y: 9 },
+              { x: 4, y: 6 },
+            ],
+            color: '#4F46E5',
+            mode: 'cubic',
+            fill: true,
+            lineWidth: 3,
+          },
+          {
+            label: 'Costs',
+            data: [
+              { x: 0, y: 2 },
+              { x: 1, y: 3 },
+              { x: 2, y: 4 },
+              { x: 3, y: 4 },
+              { x: 4, y: 5 },
+            ],
+            color: '#F59E0B',
+            circles: true,
+            fill: true,
+          },
+          {
+            label: 'Stepped',
+            data: [
+              { x: 0, y: 6 },
+              { x: 1, y: 4 },
+              { x: 2, y: 8 },
+              { x: 3, y: 2 },
+              { x: 4, y: 7 },
+            ],
+            mode: 'stepped',
+            lineWidth: 3,
+            drawValues: true,
+          },
+        ]}
+      />
     </View>
   );
 }
-
-const styles = {
-  header: { fontSize: 30, margin: 20 },
-  groupHeader: { fontSize: 20, marginBottom: 20 },
-  group: { margin: 20, backgroundColor: '#fff', borderRadius: 10, padding: 20 },
-  container: { flex: 1, backgroundColor: '#eee' },
-  view: { flex: 1, height: 200 },
-};
