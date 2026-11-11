@@ -1,13 +1,8 @@
 package com.amirgazerani.flashcharts.line
 
 import android.content.Context
-import android.graphics.Color
 import android.view.ViewGroup
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.views.ExpoView
 
@@ -15,12 +10,12 @@ class FlashLineChartView(context: Context, appContext: AppContext) : ExpoView(co
     // Let Android measure and lay out the chart child instead of React Native's layout engine.
     override val shouldUseAndroidLayout = true
 
-    private val palette = intArrayOf(
-        Color.parseColor("#4F46E5"),
-        Color.parseColor("#F59E0B"),
-        Color.parseColor("#10B981"),
-        Color.parseColor("#EF4444")
-    )
+    // The latest value of every prop. Props arrive one at a time in no fixed order,
+    // so the view keeps them and always re-applies from this state.
+    private var datasets: List<LineDatasetRecord> = emptyList()
+    private var xAxisConfig: XAxisRecord? = null
+    private var yAxisLeftConfig: YAxisRecord? = null
+    private var yAxisRightConfig: YAxisRecord? = null
 
     private val chart = LineChart(context).apply {
         layoutParams = ViewGroup.LayoutParams(
@@ -28,8 +23,6 @@ class FlashLineChartView(context: Context, appContext: AppContext) : ExpoView(co
             ViewGroup.LayoutParams.MATCH_PARENT
         )
         description.isEnabled = false
-        axisRight.isEnabled = false
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
         setNoDataText("")
     }
 
@@ -37,27 +30,39 @@ class FlashLineChartView(context: Context, appContext: AppContext) : ExpoView(co
         addView(chart)
     }
 
-    fun setDatasets(datasets: List<LineDatasetRecord>) {
-        val sets = datasets.mapIndexed { index, ds ->
-            val entries = ds.data.map { Entry(it.x.toFloat(), it.y.toFloat()) }
-            LineDataSet(entries, ds.label ?: "").apply {
-                val c = ds.color ?: palette[index % palette.size]
-                color = c
-                setCircleColor(c)
-                lineWidth = ds.lineWidth ?: 2f
-                setDrawCircles(ds.circles ?: false)
-                setDrawValues(ds.drawValues ?: false)
-                setDrawFilled(ds.fill ?: false)
-                fillColor = c
-                fillAlpha = 64
-                mode = when (ds.mode) {
-                    LineMode.CUBIC -> LineDataSet.Mode.CUBIC_BEZIER
-                    LineMode.STEPPED -> LineDataSet.Mode.STEPPED
-                    else -> LineDataSet.Mode.LINEAR
-                }
-            }
-        }
-        chart.data = LineData(sets)
-        chart.invalidate()
+    // Prop setters: store the new value, then re-apply.
+
+    fun setDatasets(value: List<LineDatasetRecord>) {
+        datasets = value
+        refreshData()
+        refreshAxes() // the right axis can turn on or off depending on the datasets
+    }
+
+    fun setXAxis(value: XAxisRecord?) {
+        xAxisConfig = value
+        refreshAxes()
+    }
+
+    fun setYAxisLeft(value: YAxisRecord?) {
+        yAxisLeftConfig = value
+        refreshAxes()
+    }
+
+    fun setYAxisRight(value: YAxisRecord?) {
+        yAxisRightConfig = value
+        refreshAxes()
+    }
+
+    private fun refreshData() {
+        if (datasets.isEmpty()) chart.clear() else chart.data = buildLineData(datasets)
+    }
+
+    private fun refreshAxes() {
+        val usesRightAxis = datasets.any { it.axis == AxisSide.RIGHT }
+        applyXAxis(chart.xAxis, xAxisConfig)
+        applyYAxis(chart.axisLeft, yAxisLeftConfig, defaultEnabled = true, defaultGridLines = true)
+        applyYAxis(chart.axisRight, yAxisRightConfig, defaultEnabled = usesRightAxis, defaultGridLines = false)
+        chart.notifyDataSetChanged() // recompute ranges and offsets after axis changes
+        chart.invalidate()           // redraw
     }
 }

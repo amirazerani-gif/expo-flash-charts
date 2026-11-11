@@ -12,7 +12,10 @@ export type LineDataset = {
   fill?: boolean;
   circles?: boolean;
   drawValues?: boolean;
-  /** Which y-axis this dataset uses. Default: 'left'. */
+  /**
+   * Which y-axis this dataset uses. Default: 'left'. A dataset on 'right'
+   * switches the right axis on automatically unless `yAxisRight.enabled` is false.
+   */
   axis?: 'left' | 'right';
 };
 
@@ -21,7 +24,10 @@ export type XAxisConfig = {
   position?: 'top' | 'bottom';
   min?: number;
   max?: number;
+  /** A hint, not a guarantee: the native library may pick a nearby count to keep labels readable. */
   labelCount?: number;
+  /** Floor on the spacing between labels, not a target step. Raise `labelCount` to get more labels. */
+  granularity?: number;
   gridLines?: boolean;
 };
 
@@ -29,7 +35,10 @@ export type YAxisConfig = {
   enabled?: boolean;
   min?: number;
   max?: number;
+  /** A hint, not a guarantee: the native library may pick a nearby count to keep labels readable. */
   labelCount?: number;
+  /** Floor on the spacing between labels, not a target step. Raise `labelCount` to get more labels. */
+  granularity?: number;
   gridLines?: boolean;
 };
 
