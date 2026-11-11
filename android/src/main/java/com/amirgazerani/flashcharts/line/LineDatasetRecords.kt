@@ -29,5 +29,6 @@ class LineDatasetRecord : Record {
     @Field val fill: Boolean? = null
     @Field val circles: Boolean? = null
     @Field val drawValues: Boolean? = null
+    @Field val valueFormat: FormatRecord? = null
     @Field val axis: AxisSide? = null
 }

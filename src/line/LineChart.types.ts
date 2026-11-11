@@ -2,6 +2,33 @@ import type { StyleProp, ViewStyle } from 'react-native';
 
 export type LinePoint = { x: number; y: number };
 
+export type NumberFormat = {
+  type: 'number';
+  /** Fixed number of decimal places. Omit to show up to 2, with trailing zeros trimmed (3, 2.5, 0.07). */
+  decimals?: number;
+  /** Text placed before the number, e.g. '$'. */
+  prefix?: string;
+  /** Text placed after the number, e.g. '%'. */
+  suffix?: string;
+};
+
+export type DateFormat = {
+  type: 'date';
+  /**
+   * Treats the value as milliseconds since the Unix epoch and formats it in the device's time zone.
+   * Supported pattern letters: yyyy, MM, dd, HH, mm, ss. Other characters are literal, e.g. 'HH:mm:ss'.
+   */
+  pattern: string;
+};
+
+export type LabelsFormat = {
+  type: 'labels';
+  /** Category names. A value of 0 shows values[0], 1 shows values[1], and so on. Values outside the list show nothing. */
+  values: string[];
+};
+
+export type ValueFormat = NumberFormat | DateFormat | LabelsFormat;
+
 export type LineDataset = {
   label?: string;
   data: LinePoint[];
@@ -12,6 +39,8 @@ export type LineDataset = {
   fill?: boolean;
   circles?: boolean;
   drawValues?: boolean;
+  /** How the value labels are formatted when `drawValues` is on. */
+  valueFormat?: ValueFormat;
   /**
    * Which y-axis this dataset uses. Default: 'left'. A dataset on 'right'
    * switches the right axis on automatically unless `yAxisRight.enabled` is false.
@@ -22,13 +51,24 @@ export type LineDataset = {
 export type XAxisConfig = {
   enabled?: boolean;
   position?: 'top' | 'bottom';
+  /** In the same units as your data (real timestamps, not offsets). */
   min?: number;
+  /** In the same units as your data (real timestamps, not offsets). */
   max?: number;
   /** A hint, not a guarantee: the native library may pick a nearby count to keep labels readable. */
   labelCount?: number;
   /** Floor on the spacing between labels, not a target step. Raise `labelCount` to get more labels. */
   granularity?: number;
   gridLines?: boolean;
+  /** How the axis labels are formatted. Omit for the library's default number labels. */
+  format?: ValueFormat;
+  /**
+   * Subtracted from every x value (data, min, max) before it reaches the chart, then added back when
+   * labels are formatted and when events report positions. The native chart stores x as a 32-bit float,
+   * which cannot hold a millisecond timestamp precisely. Set it to a timestamp near your data, for
+   * example the first point's x. Default: 0 (no offset).
+   */
+  timeReference?: number;
 };
 
 export type YAxisConfig = {
@@ -40,6 +80,8 @@ export type YAxisConfig = {
   /** Floor on the spacing between labels, not a target step. Raise `labelCount` to get more labels. */
   granularity?: number;
   gridLines?: boolean;
+  /** How the axis labels are formatted. Omit for the library's default number labels. */
+  format?: ValueFormat;
 };
 
 export type LegendConfig = {

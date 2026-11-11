@@ -30,6 +30,9 @@ class FlashLineChartView(context: Context, appContext: AppContext) : ExpoView(co
         addView(chart)
     }
 
+    private val timeReference: Double
+        get() = xAxisConfig?.timeReference ?: 0.0
+
     // Prop setters: store the new value, then re-apply.
 
     fun setDatasets(value: List<LineDatasetRecord>) {
@@ -39,7 +42,10 @@ class FlashLineChartView(context: Context, appContext: AppContext) : ExpoView(co
     }
 
     fun setXAxis(value: XAxisRecord?) {
+        val referenceChanged = (value?.timeReference ?: 0.0) != timeReference
         xAxisConfig = value
+        // The data is stored as offsets from timeReference, so a new reference means a rebuild.
+        if (referenceChanged) refreshData()
         refreshAxes()
     }
 
@@ -54,7 +60,7 @@ class FlashLineChartView(context: Context, appContext: AppContext) : ExpoView(co
     }
 
     private fun refreshData() {
-        if (datasets.isEmpty()) chart.clear() else chart.data = buildLineData(datasets)
+        if (datasets.isEmpty()) chart.clear() else chart.data = buildLineData(datasets, timeReference)
     }
 
     private fun refreshAxes() {

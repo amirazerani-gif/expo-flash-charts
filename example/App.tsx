@@ -71,6 +71,44 @@ const Y_RIGHT_OFF: YAxisConfig = { enabled: false };
 const Y_FORCED: YAxisConfig = { min: 0, max: 20 };
 const Y_STEP_ONE: YAxisConfig = { labelCount: 10, granularity: 1 };
 
+const ONE_MIN = 60 * 1000;
+const T0 = Date.UTC(2026, 10, 11, 9, 0, 0); // 2026-11-11 09:00 UTC, a real 13-digit timestamp
+
+// One point per minute: closer together than a 32-bit float can resolve at this magnitude.
+const CPU: LineDataset = {
+  label: 'CPU',
+  data: [20, 35, 30, 55, 45, 70, 60].map((y, i) => ({ x: T0 + i * ONE_MIN, y })),
+  color: '#4F46E5',
+  fill: true,
+  mode: 'cubic',
+};
+
+const REVENUE_LEFT: LineDataset = { ...REVENUE, axis: undefined, label: 'Revenue' };
+const STEPPED_FORMATTED: LineDataset = {
+  ...STEPPED,
+  valueFormat: { type: 'number', decimals: 1, suffix: ' k' },
+};
+
+const Y_CURRENCY: YAxisConfig = { format: { type: 'number', prefix: '€', decimals: 0 } };
+const Y_PERCENT: YAxisConfig = { format: { type: 'number', suffix: '%', decimals: 1 } };
+const X_CATEGORIES: XAxisConfig = {
+  format: { type: 'labels', values: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
+  granularity: 1,
+  labelCount: 5,
+};
+const X_TIME: XAxisConfig = {
+  timeReference: T0,
+  format: { type: 'date', pattern: 'HH:mm' },
+  granularity: ONE_MIN,
+  labelCount: 4,
+};
+const X_TIME_NO_REF: XAxisConfig = {
+  format: { type: 'date', pattern: 'HH:mm' },
+  granularity: ONE_MIN,
+  labelCount: 4,
+};
+const X_BAD_PATTERN: XAxisConfig = { format: { type: 'date', pattern: 'QQ' } };
+
 const CHART_STYLE = { height: 220 };
 
 function Section({
@@ -93,6 +131,7 @@ function Section({
 
 export default function App() {
   const [forced, setForced] = React.useState(true);
+  const [currency, setCurrency] = React.useState(true);
 
   return (
     <ScrollView
@@ -160,6 +199,70 @@ export default function App() {
           </Text>
         </Pressable>
         <LineChart style={CHART_STYLE} datasets={BASE} yAxisLeft={forced ? Y_FORCED : undefined} />
+      </Section>
+
+      <Section
+        title="8. Currency labels on the left axis"
+        expect="y labels like $0, $100, $200 ... $500, no decimals">
+        <LineChart style={CHART_STYLE} datasets={[REVENUE_LEFT]} yAxisLeft={Y_CURRENCY} />
+      </Section>
+
+      <Section title="9. Percent with fixed decimals" expect="y labels like 0.0%, 2.0%, 4.0% ...">
+        <LineChart style={CHART_STYLE} datasets={BASE} yAxisLeft={Y_PERCENT} />
+      </Section>
+
+      <Section
+        title="10. Category labels on x"
+        expect="Mon, Tue, Wed, Thu, Fri under the five points">
+        <LineChart style={CHART_STYLE} datasets={BASE} xAxis={X_CATEGORIES} />
+      </Section>
+
+      <Section
+        title="11. Time axis with timeReference"
+        expect="HH:mm labels about every minute or two (in the device's time zone, so the hour may not be 09), and 7 evenly spaced points">
+        <LineChart style={CHART_STYLE} datasets={[CPU]} xAxis={X_TIME} />
+      </Section>
+
+      <Section
+        title="12. Same data without timeReference"
+        expect="the precision problem: points land on a coarse grid, so the line looks stepped and labels repeat or jump unevenly">
+        <LineChart style={CHART_STYLE} datasets={[CPU]} xAxis={X_TIME_NO_REF} />
+      </Section>
+
+      <Section
+        title="13. Formatted value labels on a dataset"
+        expect="the stepped line's point labels read like 6.0 k, 4.0 k, 8.0 k">
+        <LineChart style={CHART_STYLE} datasets={[STEPPED_FORMATTED]} />
+      </Section>
+
+      <Section
+        title="14. Invalid date pattern"
+        expect="plain numeric x labels (the fallback) and no crash; Logcat shows a warning from ExpoFlashCharts">
+        <LineChart style={CHART_STYLE} datasets={BASE} xAxis={X_BAD_PATTERN} />
+      </Section>
+
+      <Section
+        title="15. Format removal (tap the button)"
+        expect="starts with $ labels; after the tap the y labels go back to plain numbers; tap again for $ labels">
+        <Pressable
+          onPress={() => setCurrency((c) => !c)}
+          style={{
+            alignSelf: 'flex-start',
+            paddingVertical: 8,
+            paddingHorizontal: 14,
+            borderRadius: 8,
+            backgroundColor: '#4F46E5',
+            marginBottom: 8,
+          }}>
+          <Text style={{ color: '#fff', fontWeight: '600' }}>
+            {currency ? 'Remove format' : 'Add format'}
+          </Text>
+        </Pressable>
+        <LineChart
+          style={CHART_STYLE}
+          datasets={[REVENUE_LEFT]}
+          yAxisLeft={currency ? Y_CURRENCY : undefined}
+        />
       </Section>
     </ScrollView>
   );

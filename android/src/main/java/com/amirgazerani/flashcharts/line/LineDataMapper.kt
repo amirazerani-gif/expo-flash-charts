@@ -14,9 +14,10 @@ private val palette = intArrayOf(
 )
 
 /** Records from JS -> MPAndroidChart data objects. Defaults for data styling live here. */
-internal fun buildLineData(datasets: List<LineDatasetRecord>): LineData {
+internal fun buildLineData(datasets: List<LineDatasetRecord>, timeReference: Double): LineData {
     val sets = datasets.mapIndexed { index, ds ->
-        val entries = ds.data.map { Entry(it.x.toFloat(), it.y.toFloat()) }
+        // Subtract in Double precision, then convert: the chart only ever sees small offsets.
+        val entries = ds.data.map { Entry((it.x - timeReference).toFloat(), it.y.toFloat()) }
         LineDataSet(entries, ds.label ?: "").apply {
             val c = ds.color ?: palette[index % palette.size]
             color = c
@@ -24,6 +25,7 @@ internal fun buildLineData(datasets: List<LineDatasetRecord>): LineData {
             lineWidth = ds.lineWidth ?: 2f
             setDrawCircles(ds.circles ?: false)
             setDrawValues(ds.drawValues ?: false)
+            buildFormatter(ds.valueFormat)?.let { valueFormatter = it }
             setDrawFilled(ds.fill ?: false)
             fillColor = c
             fillAlpha = 64
