@@ -96,6 +96,17 @@ How a prop travels: `LineChart.tsx` calls `requireNativeView('ExpoFlashCharts', 
 
 Native view names must not clash with library classes. Ours are `FlashLineChartView`, and so on, because DGCharts already has `LineChartView`.
 
+Per-chart native layout (one feature folder per chart, e.g. `line/`):
+
+| File | Job | Changes when |
+|---|---|---|
+| `*Records.kt` | typed shape of what JS sends (enums live next to the Record that uses them) | the contract changes |
+| `*Mapper.kt` | stateless functions that turn Records into library calls and defaults | mapping logic changes |
+| `Flash*ChartView.kt` | keeps the latest value of every prop, calls the mappers | a prop is added (2 to 3 lines) |
+| `ExpoFlashChartsModule.kt` | one `Prop` line per prop (top level, shared by all charts) | a prop is added (1 line) |
+
+Rules: setters only store the new value and then re-apply from stored state, because props arrive one at a time in no fixed order. Config groups use reset-then-apply, so removing a prop restores defaults (the native chart object is stateful). Data and axes refresh separately, so a style change never rebuilds the data.
+
 ## 6. Dataset mapping (almost 1 to 1)
 
 Both libraries use the same model: entry, then dataset, then chart data, then chart.
@@ -128,6 +139,8 @@ Proposal, not yet validated. The stress screen in the example app decides.
 - **Ref methods are view-scoped `AsyncFunction`s** declared in the `View` block. The JS wrapper uses `useImperativeHandle` to forward to the native view ref. Check the SDK 58 docs for the exact view-function syntax before writing it.
 - **Native-side buffering.** `append` pushes into a pending buffer on the native view. A frame-synced flush (Android `Choreographer`, iOS `CADisplayLink`) applies the buffer, at most once per frame and capped by `maxFps`: add entries, trim to `maxPoints`, one `notifyDataSetChanged` plus invalidate, then `moveViewToX` if `followLatest`.
 - **Trimming.** Drop the oldest entries past `maxPoints` on the native side.
+- **Inline config objects.** `xAxis={{ ... }}` creates a new object on every render, so it re-crosses the bridge and re-applies. Add a deep-equality check in the JS wrapper so identical values are not re-sent.
+- **Batching prop updates.** Each prop setter currently refreshes the chart on its own, so first render can redraw up to four times. Consider Expo's `OnViewDidUpdateProps` to refresh once per batch (verify the exact signature first).
 - **Later options.** Optional decimation for long histories. Batched typed arrays across the bridge if per-call overhead shows up in profiling.
 
 Declared decisions for gotchas:
@@ -154,7 +167,8 @@ Declared decisions for gotchas:
 - [x] Example app wired, Android Studio Gradle sync passing
 - [x] LineChart TypeScript contract (draft)
 - [x] Android LineChart increment 1: datasets render in the example app (2026-11-10)
-- [ ] Android LineChart, remaining increments, each tested in the example app: (2) axes, (3) legend and touch, (4) events, (5) ref methods, (6) streaming plus stress screen
+- [x] Android LineChart increment 2: axes (`xAxis`, `yAxisLeft`, `yAxisRight`, dataset `axis`, `granularity`); the example app is now a scrollable test bench
+- [ ] Android LineChart, remaining increments, each tested in the test bench: (3) formatters and time axis (declarative formatters, `timeReference`), (4) legend, touch and animation, (5) events, (6) ref methods, (7) streaming plus stress screen
 - [ ] iOS LineChart parity (Swift, on the Mac)
 - [ ] Second chart (BarChart). Extract the shared layer from what repeats.
 - [ ] PieChart, ScatterChart, CandleStickChart, HorizontalBarChart
