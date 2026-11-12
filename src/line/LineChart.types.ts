@@ -85,22 +85,69 @@ export type YAxisConfig = {
 };
 
 export type LegendConfig = {
+  /** Default: true. */
   enabled?: boolean;
+  /** Default: 'bottom'. */
   position?: 'top' | 'bottom';
+  /** Default: 'left'. */
+  align?: 'left' | 'center' | 'right';
 };
 
+/**
+ * Every option defaults to true. Inside a ScrollView, set `drag` and `pinchZoom` to false
+ * so the page can scroll when a swipe starts on the chart.
+ */
 export type TouchConfig = {
+  /** Tapping (or dragging across) the chart draws crosshair lines on the nearest point. */
   highlight?: boolean;
+  /** One-finger panning when the chart is zoomed in. */
   drag?: boolean;
+  /** Pinch to zoom. */
   pinchZoom?: boolean;
+  /** Double-tap to zoom in. */
   doubleTapZoom?: boolean;
 };
 
-export type AnimationConfig = {
-  /** Milliseconds. 0 disables animation. */
-  duration?: number;
-};
+export type AnimationAxis = 'x' | 'y' | 'xy';
 
+export type AnimationEasing =
+  | 'linear'
+  | 'easeInQuad'
+  | 'easeOutQuad'
+  | 'easeInOutQuad'
+  | 'easeInCubic'
+  | 'easeOutCubic'
+  | 'easeInOutCubic'
+  | 'easeInQuart'
+  | 'easeOutQuart'
+  | 'easeInOutQuart'
+  | 'easeInSine'
+  | 'easeOutSine'
+  | 'easeInOutSine'
+  | 'easeInExpo'
+  | 'easeOutExpo'
+  | 'easeInOutExpo'
+  | 'easeInCirc'
+  | 'easeOutCirc'
+  | 'easeInOutCirc'
+  | 'easeInBounce'
+  | 'easeOutBounce'
+  | 'easeInOutBounce';
+
+export type AnimationConfig = {
+  /**
+   * Milliseconds. Passing `animation` at all turns animation on, so `animation={{}}` gives the
+   * default animation. Use 0 to turn it off. Default: 800.
+   */
+  duration?: number;
+  /**
+   * Which axis builds up. 'x' reveals the line left to right, 'y' grows it up from the baseline,
+   * 'xy' does both. Default: 'y'.
+   */
+  axis?: AnimationAxis;
+  /** The speed curve. Default: 'easeOutCubic'. */
+  easing?: AnimationEasing;
+};
 export type StreamingConfig = {
   /** Oldest points are dropped past this count. */
   maxPoints?: number;

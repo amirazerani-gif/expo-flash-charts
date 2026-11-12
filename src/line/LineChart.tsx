@@ -2,7 +2,15 @@ import { requireNativeView } from 'expo';
 import * as React from 'react';
 import { processColor, type StyleProp, type ViewStyle } from 'react-native';
 
-import type { LineChartProps, LineDataset, XAxisConfig, YAxisConfig } from './LineChart.types';
+import type {
+  AnimationConfig,
+  LegendConfig,
+  LineChartProps,
+  LineDataset,
+  TouchConfig,
+  XAxisConfig,
+  YAxisConfig,
+} from './LineChart.types';
 
 type NativeLineDataset = Omit<LineDataset, 'color'> & { color?: number };
 
@@ -11,6 +19,9 @@ type NativeLineChartProps = {
   xAxis?: XAxisConfig;
   yAxisLeft?: YAxisConfig;
   yAxisRight?: YAxisConfig;
+  legend?: LegendConfig;
+  touch?: TouchConfig;
+  animation?: AnimationConfig;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -30,6 +41,9 @@ export default function LineChart({
   xAxis,
   yAxisLeft,
   yAxisRight,
+  legend,
+  touch,
+  animation,
   style,
 }: LineChartProps) {
   const nativeDatasets = React.useMemo<NativeLineDataset[]>(
@@ -43,6 +57,9 @@ export default function LineChart({
       xAxis={xAxis}
       yAxisLeft={yAxisLeft}
       yAxisRight={yAxisRight}
+      legend={legend}
+      touch={touch}
+      animation={animation}
       style={style}
     />
   );
