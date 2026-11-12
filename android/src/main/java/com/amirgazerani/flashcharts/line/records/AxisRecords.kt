@@ -1,4 +1,4 @@
-package com.amirgazerani.flashcharts.line
+package com.amirgazerani.flashcharts.line.records
 
 import expo.modules.kotlin.records.Field
 import expo.modules.kotlin.records.Record

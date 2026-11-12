@@ -1,5 +1,8 @@
-package com.amirgazerani.flashcharts.line
+package com.amirgazerani.flashcharts.line.mappers
 
+import com.amirgazerani.flashcharts.line.records.AxisPosition
+import com.amirgazerani.flashcharts.line.records.XAxisRecord
+import com.amirgazerani.flashcharts.line.records.YAxisRecord
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis

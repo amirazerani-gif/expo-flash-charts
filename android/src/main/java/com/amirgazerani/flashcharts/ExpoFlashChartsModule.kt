@@ -1,9 +1,9 @@
 package com.amirgazerani.flashcharts
 
 import com.amirgazerani.flashcharts.line.FlashLineChartView
-import com.amirgazerani.flashcharts.line.LineDatasetRecord
-import com.amirgazerani.flashcharts.line.XAxisRecord
-import com.amirgazerani.flashcharts.line.YAxisRecord
+import com.amirgazerani.flashcharts.line.records.LineDatasetRecord
+import com.amirgazerani.flashcharts.line.records.XAxisRecord
+import com.amirgazerani.flashcharts.line.records.YAxisRecord
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 

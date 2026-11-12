@@ -1,6 +1,8 @@
-package com.amirgazerani.flashcharts.line
+package com.amirgazerani.flashcharts.line.mappers
 
 import android.util.Log
+import com.amirgazerani.flashcharts.line.records.FormatRecord
+import com.amirgazerani.flashcharts.line.records.FormatType
 import com.github.mikephil.charting.formatter.ValueFormatter
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols

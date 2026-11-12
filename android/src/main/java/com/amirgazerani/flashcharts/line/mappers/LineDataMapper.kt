@@ -1,6 +1,9 @@
-package com.amirgazerani.flashcharts.line
+package com.amirgazerani.flashcharts.line.mappers
 
 import android.graphics.Color
+import com.amirgazerani.flashcharts.line.records.AxisSide
+import com.amirgazerani.flashcharts.line.records.LineDatasetRecord
+import com.amirgazerani.flashcharts.line.records.LineMode
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData

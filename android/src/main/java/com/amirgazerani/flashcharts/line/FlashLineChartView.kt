@@ -2,6 +2,13 @@ package com.amirgazerani.flashcharts.line
 
 import android.content.Context
 import android.view.ViewGroup
+import com.amirgazerani.flashcharts.line.mappers.applyXAxis
+import com.amirgazerani.flashcharts.line.mappers.applyYAxis
+import com.amirgazerani.flashcharts.line.mappers.buildLineData
+import com.amirgazerani.flashcharts.line.records.AxisSide
+import com.amirgazerani.flashcharts.line.records.LineDatasetRecord
+import com.amirgazerani.flashcharts.line.records.XAxisRecord
+import com.amirgazerani.flashcharts.line.records.YAxisRecord
 import com.github.mikephil.charting.charts.LineChart
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.views.ExpoView
@@ -60,14 +67,20 @@ class FlashLineChartView(context: Context, appContext: AppContext) : ExpoView(co
     }
 
     private fun refreshData() {
-        if (datasets.isEmpty()) chart.clear() else chart.data = buildLineData(datasets, timeReference)
+        if (datasets.isEmpty()) chart.clear() else chart.data =
+            buildLineData(datasets, timeReference)
     }
 
     private fun refreshAxes() {
         val usesRightAxis = datasets.any { it.axis == AxisSide.RIGHT }
         applyXAxis(chart.xAxis, xAxisConfig)
         applyYAxis(chart.axisLeft, yAxisLeftConfig, defaultEnabled = true, defaultGridLines = true)
-        applyYAxis(chart.axisRight, yAxisRightConfig, defaultEnabled = usesRightAxis, defaultGridLines = false)
+        applyYAxis(
+            chart.axisRight,
+            yAxisRightConfig,
+            defaultEnabled = usesRightAxis,
+            defaultGridLines = false
+        )
         chart.notifyDataSetChanged() // recompute ranges and offsets after axis changes
         chart.invalidate()           // redraw
     }
